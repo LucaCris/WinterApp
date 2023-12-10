@@ -5,6 +5,7 @@ public class Sky
     readonly Random rnd = new();
 
     public readonly List<SnowFlake> SFList = [];
+    public readonly List<SnowFlake> BackSFList = [];
     public float Width { get; private set; }
     public float Height { get; private set; }
     public float Floor { get; private set; }
@@ -16,14 +17,23 @@ public class Sky
         SFList.Clear();
     }
 
-    public void AddFlake()
+    public void AddFlake(bool isBack)
     {
-        SFList.Add(new SnowFlake(rnd.Next(0, (int)Width)));
+        if (!isBack)
+            SFList.Add(new SnowFlake(rnd.Next(0, (int)Width)));
+        else
+            BackSFList.Add(new SnowFlake(rnd.Next(0, (int)Width)));
     }
 
     public void Next(float windX)
     {
         float windY = Math.Abs(windX) / 4f;
+
+        foreach (var backsf in BackSFList) {
+            backsf.Y += 1 + windY*2;
+        }
+        BackSFList.RemoveAll(x => x.Y >= Floor);
+
         foreach (var sf in SFList) {
             if (sf.IsFalling) {
                 sf.Y += rnd.NextSingle() + windY;

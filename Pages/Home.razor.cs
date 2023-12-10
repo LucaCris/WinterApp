@@ -33,8 +33,12 @@ public partial class Home
         }
 
         if (rnd.NextDouble() < force) {
-            theSky.AddFlake();
+            theSky.AddFlake(false);
         }
+        else if (rnd.NextDouble() < force * 2) {
+            theSky.AddFlake(true);
+        }
+
         if (force > minForce)
             force -= rnd.NextDouble() / 1000d;
         else
@@ -65,10 +69,25 @@ public partial class Home
     void PaintSurface(SKPaintSurfaceEventArgs e)
     {
         var canvas = e.Surface.Canvas;
-        canvas.Clear(SKColors.DarkBlue);
-        //canvas.DrawText($"{force}", 0, 20, new SKPaint { ColorF = SKColors.White });
+//        canvas.Clear(SKColors.DarkBlue);
 
-        var p = new SKPaint { Color = SKColors.White, StrokeWidth = SnowFlake.Dim };
+        var paint=new SKPaint();
+        paint.Shader = SKShader.CreateLinearGradient(
+                                new SKPoint(0, 0),
+                                new SKPoint(0, theSky.Height),
+                                new SKColor[] { SKColors.Black, SKColors.DarkBlue },
+                                new float[] { 0, 1 },
+                                SKShaderTileMode.Repeat);
+        canvas.DrawRect(0, 0, theSky.Width, theSky.Height, paint);
+
+        //canvas.DrawText($"{theSky.SFList.Count} {theSky.BackSFList.Count}", 0, 20, new SKPaint { ColorF = SKColors.White });
+
+        var p = new SKPaint { Color = SKColors.FloralWhite, StrokeWidth = 1 };
+        foreach (var sf in theSky.BackSFList) {
+            canvas.DrawPoint(sf.X, sf.Y, p);
+        }
+
+        p = new SKPaint { Color = SKColors.White, StrokeWidth = SnowFlake.Dim };
         foreach (var sf in theSky.SFList) {
             canvas.DrawPoint(sf.X - SnowFlake.Dim2, sf.Y - SnowFlake.Dim2, p);
         }
