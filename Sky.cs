@@ -1,20 +1,17 @@
-﻿using System.Numerics;
-
-namespace WinterApp;
+﻿namespace WinterApp;
 
 public class Sky
 {
-    Random rnd = new();
+    readonly Random rnd = new();
 
     public readonly List<SnowFlake> SFList = [];
     public float Width { get; private set; }
     public float Height { get; private set; }
-    public float DPI { get; private set; }
     public float Floor { get; private set; }
 
-    public void Resize(float width, float height, float dpi)
+    public void Resize(float width, float height)
     {
-        (Width, Height, DPI) = (width, height, dpi);
+        (Width, Height) = (width, height);
         Floor = height - SnowFlake.Dim;
         SFList.Clear();
     }
