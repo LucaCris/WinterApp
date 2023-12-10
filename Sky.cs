@@ -15,6 +15,7 @@ public class Sky
         (Width, Height) = (width, height);
         Floor = height - SnowFlake.Dim;
         SFList.Clear();
+        BackSFList.Clear();
     }
 
     public void AddFlake(bool isBack)

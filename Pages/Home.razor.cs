@@ -15,6 +15,9 @@ public partial class Home
     const double minForce = 0.1;
     double force = minForce;
     public float DPI;
+    private DateTime LastRender;
+    int FPS;
+    int throttle;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -32,6 +35,11 @@ public partial class Home
             return;
         }
 
+        if (throttle % 60 == 0)
+            FPS = (int)(1.0 / (DateTime.Now - LastRender).TotalSeconds);
+        //double factor = (DateTime.Now - LastRender).TotalMilliseconds * 6 / 100;
+        LastRender = DateTime.Now;
+
         if (rnd.NextDouble() < force) {
             theSky.AddFlake(false);
         }
@@ -47,6 +55,8 @@ public partial class Home
         theSky.Next(windX);
 
         canvasView.Invalidate();
+
+        throttle++;
     }
 
     [JSInvokable]
@@ -54,6 +64,7 @@ public partial class Home
     {
         theSky.Resize((float)width, (float)height);
         DPI = (float)ratio;
+        throttle = 0;
     }
 
     public void OnMouseMove(MouseEventArgs e)
@@ -69,18 +80,20 @@ public partial class Home
     void PaintSurface(SKPaintSurfaceEventArgs e)
     {
         var canvas = e.Surface.Canvas;
-//        canvas.Clear(SKColors.DarkBlue);
+        // canvas.Clear(SKColors.DarkBlue);
 
-        var paint=new SKPaint();
-        paint.Shader = SKShader.CreateLinearGradient(
+        var paint = new SKPaint
+        {
+            Shader = SKShader.CreateLinearGradient(
                                 new SKPoint(0, 0),
                                 new SKPoint(0, theSky.Height),
-                                new SKColor[] { SKColors.Black, SKColors.DarkBlue },
-                                new float[] { 0, 1 },
-                                SKShaderTileMode.Repeat);
+                                [SKColors.Black, SKColors.DarkBlue],
+                                [0, 1],
+                                SKShaderTileMode.Clamp)
+        };
         canvas.DrawRect(0, 0, theSky.Width, theSky.Height, paint);
 
-        //canvas.DrawText($"{theSky.SFList.Count} {theSky.BackSFList.Count}", 0, 20, new SKPaint { ColorF = SKColors.White });
+        canvas.DrawText($"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count}", 10, 20, new SKPaint { ColorF = SKColors.Gray });
 
         var p = new SKPaint { Color = SKColors.FloralWhite, StrokeWidth = 1 };
         foreach (var sf in theSky.BackSFList) {
