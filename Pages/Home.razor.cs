@@ -105,6 +105,11 @@ public partial class Home
             canvas.DrawPoint(sf.X - SnowFlake.Dim2, sf.Y - SnowFlake.Dim2, p);
         }
 
+        foreach (var brick in theSky.BrickList) {
+            p = new SKPaint { ColorF = brick.Color };
+            canvas.DrawRect(brick.X, brick.Y, brick.W, brick.H, p);
+        }
+
         p = new SKPaint { ColorF = SKColors.White };
         canvas.DrawRect(0, theSky.Floor, theSky.Width, theSky.Height - theSky.Floor, p);
     }
