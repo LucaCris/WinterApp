@@ -71,14 +71,23 @@ public class Sky
     {
         float windY = Math.Abs(windX) / 4f;
 
-        foreach (var backsf in BackSFList) {
-            backsf.Y += 1 + windY * 2;
-        }
+        // se finestra molto grande, aumenta velocità discesa gradualmente
+        float speedY = (Width * Height) switch
+        {
+            < 1_000_000 => 0,
+            < 2_000_000 => 0.5f,
+            < 3_000_000 => 1,
+            _ => 2,
+        };
+
+        foreach (var backsf in BackSFList)
+            backsf.Y += speedY + 1 + windY * 2;
+
         BackSFList.RemoveAll(x => x.Y >= Floor);
 
         foreach (var sf in SFList) {
             if (sf.IsFalling) {
-                sf.Y += rnd.NextSingle() + windY;
+                sf.Y += speedY + rnd.NextSingle() + windY;
                 sf.X += rnd.NextSingle() - rnd.NextSingle() + windX;
                 if (sf.Y > Floor) {
                     sf.IsFalling = false;
@@ -94,7 +103,9 @@ public class Sky
                     var coll = BrickList.FirstOrDefault(b => b.Collide(sf.X, sf.Y));
                     if (coll != null) {
                         sf.IsFalling = false;
-                        sf.Y = coll.TopY;
+                        // solo se è vicino alla parte alta del brick, incollalo esattamente sopra, altrimenti si incolla dove è rimasto
+                        if (Math.Abs(sf.Y - coll.TopY) < SnowFlake.Dim)
+                            sf.Y = coll.TopY;
                     }
                 }
 
