@@ -12,6 +12,7 @@ public class Sky
     public float Width { get; private set; }
     public float Height { get; private set; }
     public float Floor { get; private set; }
+    public float Footprint { get; private set; }
 
     public void Resize(float width, float height)
     {
@@ -20,12 +21,13 @@ public class Sky
         SFList.Clear();
         BackSFList.Clear();
         BrickList.Clear();
-        //BrickList.Add(new Brick(Width / 2 - 40, Height / 2 - 10, 80, 20, SKColors.Red));
-        AddHome(Width / 2, Floor);
-        AddTree(Width / 1.33f, Floor);
+        Footprint = 0;
+        Footprint += AddHome(Width / 2, Floor);
+        Footprint += AddTree(Width / 8f, Floor, 1.1f, 1.4f);
+        Footprint += AddTree(Width / 1.33f, Floor, 1, 1);
     }
 
-    public void AddHome(float x, float y)
+    public float AddHome(float x, float y)
     {
         BrickList.Add(new Brick(x, y, 200, -150, SKColors.Gray));
         BrickList.Add(new Brick(x + 80, y, 40, -70, SKColors.Maroon));
@@ -48,15 +50,19 @@ public class Sky
             BrickList.Add(new Brick(x, y, -w, -15, SKColors.DarkRed));
             w += 40;
         }
+
+        return 240;
     }
 
-    public void AddTree(float x, float y)
+    public float AddTree(float x, float y, float zx, float zy)
     {
-        BrickList.Add(new Brick(x + 75, y, 50, -50, SKColors.Brown));
-        y -= 50;
+        BrickList.Add(new Brick(x + 75 * zx, y, 50 * zx, -50 * zy, SKColors.Brown));
+        y -= 50 * zy;
         for (int i = 0; i < 7; i++) {
-            BrickList.Add(new Brick(x + i * 15, y - i * 30, 200 - i * 30, -30, SKColors.Green));
+            BrickList.Add(new Brick(x + i * 15 * zx, y - i * 30 * zy, 200 * zx - i * 30 * zx, -30 * zy, SKColors.Green));
         }
+
+        return 200 * zx;
     }
 
     public void AddFlake(bool isBack)
@@ -95,8 +101,12 @@ public class Sky
                     sf.X = (int)((sf.X + SnowFlake.Dim2) / SnowFlake.Dim) * SnowFlake.Dim;
                 }
                 else {
-                    if (SFList.Any(x => !x.IsFalling && Math.Abs(x.X - sf.X) < 1 && Math.Abs(x.Y - sf.Y) < SnowFlake.Dim2))
+                    if (SFList.Any(x => !x.IsFalling && Math.Abs(x.X - sf.X) < 1 && Math.Abs(x.Y - sf.Y) < SnowFlake.Dim2)) {
                         sf.IsFalling = false;
+                        // se collide con altro fiocco, al 25% eliminalo (fusione)
+                        if (rnd.NextDouble() < 0.25)
+                            sf.DoRemove = true;
+                    }
                 }
 
                 if (sf.IsFalling) {
@@ -116,8 +126,10 @@ public class Sky
             }
         }
 
+        SFList.RemoveAll(x => x.DoRemove);
+
         int n = SFList.Count(x => !x.IsFalling && x.Y >= Floor);
-        if (n > Width / SnowFlake.Dim) {
+        if (n > (Width - Footprint) / SnowFlake.Dim) {
             SFList.RemoveAll(x => !x.IsFalling && x.Y >= Floor);
             Floor -= SnowFlake.Dim2;
         }

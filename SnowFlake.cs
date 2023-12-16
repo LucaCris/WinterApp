@@ -8,4 +8,5 @@ public class SnowFlake(float x)
     public float X { get; set; } = x;
     public float Y { get; set; } = 0;
     public bool IsFalling { get; set; } = true;
+    public bool DoRemove { get; set; } = false;
 }
