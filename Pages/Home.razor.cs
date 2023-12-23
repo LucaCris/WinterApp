@@ -18,6 +18,7 @@ public partial class Home
     private DateTime LastRender;
     int FPS;
     int throttle;
+    bool SnowMode = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -40,11 +41,16 @@ public partial class Home
         //double factor = (DateTime.Now - LastRender).TotalMilliseconds * 6 / 100;
         LastRender = DateTime.Now;
 
-        if (rnd.NextDouble() < force) {
-            theSky.AddFlake(false);
+        if (SnowMode) {
+            if (rnd.NextDouble() < force) {
+                theSky.AddFlake(false);
+            }
+            else if (rnd.NextDouble() < force * 2) {
+                theSky.AddFlake(true);
+            }
         }
-        else if (rnd.NextDouble() < force * 2) {
-            theSky.AddFlake(true);
+        else {
+            theSky.AddDrop();
         }
 
         if (force > minForce)
@@ -52,7 +58,7 @@ public partial class Home
         else
             force = minForce;
 
-        theSky.Next(windX);
+        theSky.Next(windX, SnowMode);
 
         canvasView.Invalidate();
 
@@ -77,6 +83,11 @@ public partial class Home
         force = minForce * 4;
     }
 
+    public void OnSwitch()
+    {
+        SnowMode = !SnowMode;
+    }
+
     void PaintSurface(SKPaintSurfaceEventArgs e)
     {
         var canvas = e.Surface.Canvas;
@@ -93,7 +104,7 @@ public partial class Home
         };
         canvas.DrawRect(0, 0, theSky.Width, theSky.Height, paint);
 
-        canvas.DrawText($"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count}", 10, 20, new SKPaint { ColorF = SKColors.Gray });
+        canvas.DrawText($"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count + theSky.DropList.Count}", 10, 20, new SKPaint { ColorF = SKColors.Gray });
         //canvas.DrawText($"SEASON GREETINGS FROM COMMODORE", 130, 65, new SKPaint { ColorF = SKColors.White });
         //canvas.DrawText($"BY LUCA C. 2023/24", theSky.Width - 140, theSky.Height - 15, new SKPaint { ColorF = SKColors.White });
 
@@ -110,6 +121,11 @@ public partial class Home
         foreach (var brick in theSky.BrickList) {
             p = new SKPaint { ColorF = brick.Color };
             canvas.DrawRect(brick.X, brick.Y, brick.W, brick.H, p);
+        }
+
+        p = new SKPaint { Color = SKColors.LightBlue.WithAlpha(200), StrokeWidth = 1 };
+        foreach (var sf in theSky.DropList) {
+            canvas.DrawPoint(sf.X, sf.Y, p);
         }
 
         p = new SKPaint { ColorF = SKColors.White };

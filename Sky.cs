@@ -8,11 +8,13 @@ public class Sky
 
     public readonly List<SnowFlake> SFList = [];
     public readonly List<SnowFlake> BackSFList = [];
+    public readonly List<RainDrop> DropList = [];
     public readonly List<Brick> BrickList = [];
     public float Width { get; private set; }
     public float Height { get; private set; }
     public float Floor { get; private set; }
     public float Footprint { get; private set; }
+    private DateTime LastFloorFused;
 
     public void Resize(float width, float height)
     {
@@ -20,6 +22,7 @@ public class Sky
         Floor = height - SnowFlake.Dim;
         SFList.Clear();
         BackSFList.Clear();
+        DropList.Clear();
         BrickList.Clear();
         Footprint = 0;
         Footprint += AddHome(Width / 2, Floor);
@@ -73,7 +76,12 @@ public class Sky
             BackSFList.Add(new SnowFlake(rnd.Next(0, (int)Width)));
     }
 
-    public void Next(float windX)
+    public void AddDrop()
+    {
+        DropList.Add(new RainDrop(rnd.Next(0, (int)Width)));
+    }
+
+    public void Next(float windX, bool snowMode)
     {
         float windY = Math.Abs(windX) / 4f;
 
@@ -86,10 +94,19 @@ public class Sky
             _ => 2,
         };
 
+        foreach (var drop in DropList) {
+            drop.Y += 5 + speedY * 2 + rnd.NextSingle() + windY * 2;
+            drop.X += windX * 8;
+        }
+
+        DropList.RemoveAll(x => x.Y >= Floor);
+
         foreach (var backsf in BackSFList)
             backsf.Y += speedY + 1 + windY * 2;
 
         BackSFList.RemoveAll(x => x.Y >= Floor);
+
+        bool dropFused = false;
 
         foreach (var sf in SFList) {
             if (sf.IsFalling) {
@@ -124,6 +141,14 @@ public class Sky
                 else if (sf.X > Width + SnowFlake.Dim * 2)
                     sf.X = -SnowFlake.Dim;
             }
+            else if (!snowMode && !dropFused) {
+                if (rnd.NextDouble() < 0.01) {
+                    if (!SFList.Any(other => !other.IsFalling && other.Y < sf.Y && Math.Abs(other.X - sf.X) < SnowFlake.Dim2)) {
+                        sf.DoRemove = true;
+                        dropFused = true;
+                    }
+                }
+            }
         }
 
         SFList.RemoveAll(x => x.DoRemove);
@@ -132,6 +157,11 @@ public class Sky
         if (n > (Width - Footprint) / SnowFlake.Dim) {
             SFList.RemoveAll(x => !x.IsFalling && x.Y >= Floor);
             Floor -= SnowFlake.Dim2;
+            LastFloorFused = DateTime.Now;
+        }
+        else if (n == 0 && !snowMode && Floor < Height - SnowFlake.Dim && rnd.NextDouble() < 0.05 && (DateTime.Now - LastFloorFused).TotalSeconds > 10) {
+            Floor += SnowFlake.Dim2;
+            LastFloorFused = DateTime.Now;
         }
     }
 }
