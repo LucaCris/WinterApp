@@ -91,44 +91,11 @@ public partial class Home
     void PaintSurface(SKPaintSurfaceEventArgs e)
     {
         var canvas = e.Surface.Canvas;
-        // canvas.Clear(SKColors.DarkBlue);
 
-        var paint = new SKPaint
-        {
-            Shader = SKShader.CreateLinearGradient(
-                                new SKPoint(0, 0),
-                                new SKPoint(0, theSky.Height),
-                                [SKColors.Black, SKColors.DarkBlue],
-                                [0, 1],
-                                SKShaderTileMode.Clamp)
-        };
-        canvas.DrawRect(0, 0, theSky.Width, theSky.Height, paint);
+        theSky.Draw(e.Surface.Canvas);
 
         canvas.DrawText($"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count + theSky.DropList.Count}", 10, 20, new SKPaint { ColorF = SKColors.Gray });
         //canvas.DrawText($"SEASON GREETINGS FROM COMMODORE", 130, 65, new SKPaint { ColorF = SKColors.White });
         //canvas.DrawText($"BY LUCA C. 2023/24", theSky.Width - 140, theSky.Height - 15, new SKPaint { ColorF = SKColors.White });
-
-        var p = new SKPaint { Color = SKColors.FloralWhite, StrokeWidth = 1 };
-        foreach (var sf in theSky.BackSFList) {
-            canvas.DrawPoint(sf.X, sf.Y, p);
-        }
-
-        p = new SKPaint { Color = SKColors.White, StrokeWidth = SnowFlake.Dim };
-        foreach (var sf in theSky.SFList) {
-            canvas.DrawPoint(sf.X - SnowFlake.Dim2, sf.Y - SnowFlake.Dim2, p);
-        }
-
-        foreach (var brick in theSky.BrickList) {
-            p = new SKPaint { ColorF = brick.Color };
-            canvas.DrawRect(brick.X, brick.Y, brick.W, brick.H, p);
-        }
-
-        p = new SKPaint { Color = SKColors.LightBlue.WithAlpha(200), StrokeWidth = 1 };
-        foreach (var sf in theSky.DropList) {
-            canvas.DrawPoint(sf.X, sf.Y, p);
-        }
-
-        p = new SKPaint { ColorF = SKColors.White };
-        canvas.DrawRect(0, theSky.Floor, theSky.Width, theSky.Height - theSky.Floor, p);
     }
 }
