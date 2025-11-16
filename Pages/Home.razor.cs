@@ -95,7 +95,7 @@ public partial class Home
         theSky.Draw(e.Surface.Canvas);
 
         canvas.DrawText($"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count + theSky.DropList.Count}", 10, 20, new SKPaint { ColorF = SKColors.Gray });
-        //canvas.DrawText($"SEASON GREETINGS FROM COMMODORE", 130, 65, new SKPaint { ColorF = SKColors.White });
-        //canvas.DrawText($"BY LUCA C. 2023/24", theSky.Width - 140, theSky.Height - 15, new SKPaint { ColorF = SKColors.White });
+        //canvas.DrawText($"SEASON GREETINGS FROM COMMODORE", 180, 65, new SKPaint { ColorF = SKColors.White });
+        canvas.DrawText($"BY LUCA C. 2025/26", theSky.Width - 140, theSky.Height - 15, new SKPaint { ColorF = SKColors.White });
     }
 }

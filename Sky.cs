@@ -192,7 +192,7 @@ public class Sky
             canvas.DrawRect(brick.X, brick.Y, brick.W, brick.H, p);
         }
 
-        p = new SKPaint { Color = SKColors.LightBlue.WithAlpha(200), StrokeWidth = 1 };
+        p = new SKPaint { Color = SKColors.LightBlue.WithAlpha(200), StrokeWidth = 2 };
         foreach (var sf in DropList)
             canvas.DrawLine(sf.X, sf.Y, sf.X, sf.Y + 2, p);
 
