@@ -13,7 +13,7 @@
     align-items: center;
     justify-content: center;
     background-color:black">
-    <SKCanvasView @ref="canvasView" id="canvasView" OnPaintSurface="PaintSurface" @onmousemove="(args)=>OnMouseMove(args)" @onclick="OnMouseClick" style="width:100%;height:100%" />
+    <SKGLView @ref="glView" id="canvasView" OnPaintSurface="GLPaintSurface" @onmousemove="(args)=>OnMouseMove(args)" @onclick="OnMouseClick" style="width:100%;height:100%" EnableRenderLoop="true" />
 </div>
 
 @* <img src="/C64_T.png" style="position:sticky; top:0;user-select: none" width="300" /> *@

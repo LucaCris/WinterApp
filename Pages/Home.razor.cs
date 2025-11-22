@@ -7,7 +7,8 @@ namespace WinterApp.Pages;
 
 public partial class Home
 {
-    SKCanvasView? canvasView;
+    private SKGLView? glView;
+
     private Timer? timer;
     readonly Random rnd = new();
     readonly Sky theSky = new();
@@ -31,7 +32,7 @@ public partial class Home
 
     async Task OnTimer(object? state)
     {
-        if (canvasView == null) {
+        if (glView == null) {
             await Task.Delay(1);
             return;
         }
@@ -59,9 +60,6 @@ public partial class Home
             force = minForce;
 
         theSky.Next(windX, SnowMode);
-
-        canvasView.Invalidate();
-
         throttle++;
     }
 
@@ -88,14 +86,33 @@ public partial class Home
         SnowMode = !SnowMode;
     }
 
-    void PaintSurface(SKPaintSurfaceEventArgs e)
+    private void GLPaintSurface(SKPaintGLSurfaceEventArgs args)
     {
-        var canvas = e.Surface.Canvas;
+        var canvas = args.Surface.Canvas;
 
-        theSky.Draw(e.Surface.Canvas);
+        theSky.Draw(canvas);
 
-        canvas.DrawText($"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count + theSky.DropList.Count}", 10, 20, new SKPaint { ColorF = SKColors.Gray });
+        // Create a font for text rendering
+        using var font = new SKFont();
+
+        // Draw FPS and object count
+        canvas.DrawText(
+            $"FPS: {FPS} - OBJS: {theSky.SFList.Count + theSky.BackSFList.Count + theSky.DropList.Count}",
+            10, 20,
+            SKTextAlign.Left,
+            font,
+            new SKPaint { ColorF = SKColors.Gray }
+        );
+
         //canvas.DrawText($"SEASON GREETINGS FROM COMMODORE", 180, 65, new SKPaint { ColorF = SKColors.White });
-        canvas.DrawText($"BY LUCA C. 2025/26", theSky.Width - 140, theSky.Height - 15, new SKPaint { ColorF = SKColors.White });
+
+        // Draw author text
+        canvas.DrawText(
+            $"BY LUCA C. 2025/26",
+            theSky.Width - 140, theSky.Height - 15,
+            SKTextAlign.Left,
+            font,
+            new SKPaint { ColorF = SKColors.White }
+        );
     }
 }
