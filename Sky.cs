@@ -116,8 +116,7 @@ public class Sky
                     sf.IsFalling = false;
                     sf.Y = Floor;
                     sf.X = (int)((sf.X + SnowFlake.Dim2) / SnowFlake.Dim) * SnowFlake.Dim;
-                }
-                else {
+                } else {
                     if (SFList.Any(x => !x.IsFalling && Math.Abs(x.X - sf.X) < 1 && Math.Abs(x.Y - sf.Y) < SnowFlake.Dim2)) {
                         sf.IsFalling = false;
                         // se collide con altro fiocco, al 25% eliminalo (fusione)
@@ -140,8 +139,7 @@ public class Sky
                     sf.X = Width + SnowFlake.Dim;
                 else if (sf.X > Width + SnowFlake.Dim * 2)
                     sf.X = -SnowFlake.Dim;
-            }
-            else if (!snowMode && !dropFused) {
+            } else if (!snowMode && !dropFused) {
                 if (rnd.NextDouble() < 0.01) {
                     if (!SFList.Any(other => !other.IsFalling && other.Y < sf.Y && Math.Abs(other.X - sf.X) < SnowFlake.Dim2)) {
                         sf.DoRemove = true;
@@ -158,8 +156,7 @@ public class Sky
             SFList.RemoveAll(x => !x.IsFalling && x.Y >= Floor);
             Floor -= SnowFlake.Dim2;
             LastFloorFused = DateTime.Now;
-        }
-        else if (n == 0 && !snowMode && Floor < Height - SnowFlake.Dim && rnd.NextDouble() < 0.05 && (DateTime.Now - LastFloorFused).TotalSeconds > 10) {
+        } else if (n == 0 && !snowMode && Floor < Height - SnowFlake.Dim && rnd.NextDouble() < 0.05 && (DateTime.Now - LastFloorFused).TotalSeconds > 10) {
             Floor += SnowFlake.Dim2;
             LastFloorFused = DateTime.Now;
         }

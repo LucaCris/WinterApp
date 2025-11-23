@@ -45,12 +45,10 @@ public partial class Home
         if (SnowMode) {
             if (rnd.NextDouble() < force) {
                 theSky.AddFlake(false);
-            }
-            else if (rnd.NextDouble() < force * 2) {
+            } else if (rnd.NextDouble() < force * 2) {
                 theSky.AddFlake(true);
             }
-        }
-        else {
+        } else {
             theSky.AddDrop();
         }
 
