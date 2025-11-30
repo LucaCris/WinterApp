@@ -20,11 +20,12 @@ public partial class Home
     int FPS;
     int throttle;
     bool SnowMode = true;
+    private float prevW;
+    private float prevH;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender) {
-            await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             timer = new Timer(async (s) => await OnTimer(s), null, 0, 16);
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -33,7 +34,7 @@ public partial class Home
     async Task OnTimer(object? state)
     {
         if (glView == null) {
-            await Task.Delay(1);
+            await Task.Yield();
             return;
         }
 
@@ -61,7 +62,6 @@ public partial class Home
         throttle++;
     }
 
-    [JSInvokable]
     public void ResizeInBlazor(double width, double height, double ratio)
     {
         theSky.Resize((float)width, (float)height);
@@ -87,6 +87,15 @@ public partial class Home
     private void GLPaintSurface(SKPaintGLSurfaceEventArgs args)
     {
         var canvas = args.Surface.Canvas;
+
+        var W = canvas.DeviceClipBounds.Width;
+        var H = canvas.DeviceClipBounds.Height;
+
+        if (W != prevW || H != prevH) {
+            ResizeInBlazor(W, H, DPI);
+            prevW = W;
+            prevH = H;
+        }
 
         theSky.Draw(canvas);
 

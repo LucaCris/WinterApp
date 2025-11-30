@@ -30,19 +30,6 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
-
-    <script>
-        function resizeCanvasToFitWindow() {
-            var c = document.getElementById('canvasView');
-            theInstance.invokeMethodAsync('ResizeInBlazor', c.width, c.height, window.devicePixelRatio);
-        }
-
-        window.initRenderJS = (instance) => {
-            window.theInstance = instance;
-            window.addEventListener("resize", resizeCanvasToFitWindow);
-            setTimeout(resizeCanvasToFitWindow, 500);
-        };
-    </script>
 </body>
 
 </html>
