@@ -128,7 +128,7 @@ public class Sky
         // Right leg
         BrickList.Add(new Brick(x + 38, y, 12, -25, SKColors.Brown));
 
-        return 70;
+        return 65;
     }
 
     public void AddFlake(bool isBack)
@@ -229,9 +229,7 @@ public class Sky
     public void Draw(SKCanvas canvas)
     {
         // Draw only animated elements (snowflakes, raindrops) without bricks
-        var bgPaint = new SKPaint { ColorF = SKColors.Black };
-        bgPaint.ColorF = bgPaint.ColorF.WithAlpha(0);
-        canvas.DrawRect(0, 0, Width, Height, bgPaint);
+        //canvas.Clear(SKColors.Transparent);
 
         var p = new SKPaint { Color = SKColors.FloralWhite, StrokeWidth = 1 };
         foreach (var sf in BackSFList)
