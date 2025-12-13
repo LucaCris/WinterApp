@@ -13,7 +13,8 @@
     align-items: center;
     justify-content: center;
     background-color:black">
-    <SKGLView @ref="glView" id="canvasView" OnPaintSurface="GLPaintSurface" @onmousemove="(args)=>OnMouseMove(args)" @onclick="OnMouseClick" style="width:100%;height:100%" EnableRenderLoop="true" />
+    <SKGLView @ref="bgView" id="bgCanvasView" OnPaintSurface="BGPaintSurface" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;" EnableRenderLoop="false" />
+    <SKGLView @ref="glView" id="canvasView" OnPaintSurface="GLPaintSurface" @onmousemove="(args)=>OnMouseMove(args)" @onclick="OnMouseClick" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;" EnableRenderLoop="true" />
 </div>
 
 @* <img src="/C64_T.png" style="position:sticky; top:0;user-select: none" width="300" /> *@

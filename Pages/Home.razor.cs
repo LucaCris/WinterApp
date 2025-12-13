@@ -8,6 +8,7 @@ namespace WinterApp.Pages;
 public partial class Home
 {
     private SKGLView? glView;
+    private SKGLView? bgView;
 
     private Timer? timer;
     readonly Random rnd = new();
@@ -62,11 +63,13 @@ public partial class Home
         throttle++;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
     public void ResizeInBlazor(double width, double height, double ratio)
     {
         theSky.Resize((float)width, (float)height);
         DPI = (float)ratio;
         throttle = 0;
+        bgView?.Invalidate();
     }
 
     public void OnMouseMove(MouseEventArgs e)
@@ -84,6 +87,29 @@ public partial class Home
         SnowMode = !SnowMode;
     }
 
+    private void BGPaintSurface(SKPaintGLSurfaceEventArgs args)
+    {
+        var canvas = args.Surface.Canvas;
+
+        // Draw background gradient
+        canvas.DrawRect(0, 0, theSky.Width, theSky.Height,
+            new SKPaint
+            {
+                Shader = SKShader.CreateLinearGradient(
+                                new SKPoint(0, 0),
+                                new SKPoint(0, theSky.Height),
+                                [SKColors.Black, SKColors.DarkBlue],
+                                [0, 1],
+                                SKShaderTileMode.Clamp)
+            });
+
+        // Draw bricks only
+        foreach (var brick in theSky.BrickList) {
+            var p = new SKPaint { ColorF = brick.Color };
+            canvas.DrawRect(brick.X, brick.Y, brick.W, brick.H, p);
+        }
+    }
+
     private void GLPaintSurface(SKPaintGLSurfaceEventArgs args)
     {
         var canvas = args.Surface.Canvas;
@@ -98,6 +124,10 @@ public partial class Home
         }
 
         theSky.Draw(canvas);
+
+        // Draw snow floor
+        var floorPaint = new SKPaint { ColorF = SKColors.White };
+        canvas.DrawRect(0, theSky.Floor, theSky.Width, theSky.Height - theSky.Floor, floorPaint);
 
         // Create a font for text rendering
         using var font = new SKFont();

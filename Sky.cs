@@ -93,6 +93,7 @@ public class Sky
             < 3_000_000 => 1,
             _ => 2,
         };
+        //speedY = 6;
 
         foreach (var drop in DropList) {
             drop.Y += 5 + speedY * 2 + rnd.NextSingle() + windY * 2;
@@ -164,36 +165,21 @@ public class Sky
 
     public void Draw(SKCanvas canvas)
     {
-        canvas.DrawRect(0, 0, Width, Height,
-            new SKPaint
-            {
-                Shader = SKShader.CreateLinearGradient(
-                                new SKPoint(0, 0),
-                                new SKPoint(0, Height),
-                                [SKColors.Black, SKColors.DarkBlue],
-                                [0, 1],
-                                SKShaderTileMode.Clamp)
-            });
+        // Draw only animated elements (snowflakes, raindrops) without bricks
+        var bgPaint = new SKPaint { ColorF = SKColors.Black };
+        bgPaint.ColorF = bgPaint.ColorF.WithAlpha(0);
+        canvas.DrawRect(0, 0, Width, Height, bgPaint);
 
         var p = new SKPaint { Color = SKColors.FloralWhite, StrokeWidth = 1 };
         foreach (var sf in BackSFList)
             canvas.DrawPoint(sf.X, sf.Y, p);
 
-
         p = new SKPaint { Color = SKColors.White, StrokeWidth = SnowFlake.Dim };
         foreach (var sf in SFList)
             canvas.DrawPoint(sf.X - SnowFlake.Dim2, sf.Y - SnowFlake.Dim2, p);
 
-        foreach (var brick in BrickList) {
-            p = new SKPaint { ColorF = brick.Color };
-            canvas.DrawRect(brick.X, brick.Y, brick.W, brick.H, p);
-        }
-
         p = new SKPaint { Color = SKColors.LightBlue.WithAlpha(200), StrokeWidth = 2 };
         foreach (var sf in DropList)
             canvas.DrawLine(sf.X, sf.Y, sf.X, sf.Y + 2, p);
-
-        p = new SKPaint { ColorF = SKColors.White };
-        canvas.DrawRect(0, Floor, Width, Height - Floor, p);
     }
 }
