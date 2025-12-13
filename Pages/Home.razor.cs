@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 

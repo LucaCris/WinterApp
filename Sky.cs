@@ -28,6 +28,8 @@ public class Sky
         Footprint += AddHome(Width / 2, Floor);
         Footprint += AddTree(Width / 8f, Floor, 1.1f, 1.4f);
         Footprint += AddTree(Width / 1.33f, Floor, 1, 1);
+        Footprint += AddCar(Width / 4f, Floor);
+        Footprint += AddPerson(Width / 1.5f, Floor);
     }
 
     public float AddHome(float x, float y)
@@ -66,6 +68,67 @@ public class Sky
         }
 
         return 200 * zx;
+    }
+
+    public float AddCar(float x, float y)
+    {
+        // Car body
+        BrickList.Add(new Brick(x, y - 5, 160, -40, SKColors.Red));
+
+        // Left wheel
+        BrickList.Add(new Brick(x + 20, y, 30, -30, SKColors.Gray));
+
+        // Right wheel
+        BrickList.Add(new Brick(x + 110, y, 30, -30, SKColors.Gray));
+
+        // Car cabin (upper part)
+        BrickList.Add(new Brick(x + 35, y - 40, 90, -35, SKColors.DarkRed));
+
+        // Left window
+        BrickList.Add(new Brick(x + 40, y - 45, 25, -20, SKColors.LightCyan));
+
+        // Right window
+        BrickList.Add(new Brick(x + 95, y - 45, 25, -20, SKColors.LightCyan));
+
+        // Windshield
+        BrickList.Add(new Brick(x + 70, y - 50, 25, -15, SKColors.LightCyan));
+
+        return 160;
+    }
+
+    public float AddPerson(float x, float y)
+    {
+        // Body
+        BrickList.Add(new Brick(x + 15, y - 25, 40, -25, SKColors.Blue));
+
+        // Head
+        BrickList.Add(new Brick(x + 20, y - 50, 30, -30, SKColors.BurlyWood));
+
+        // Hat
+        BrickList.Add(new Brick(x + 15, y - 80, 40, -15, SKColors.Black));
+
+        // Hat brim
+        BrickList.Add(new Brick(x + 10, y - 80, 50, -5, SKColors.DarkGray));
+
+        // Left arm
+        BrickList.Add(new Brick(x + 5, y - 15, 10, -30, SKColors.BurlyWood));
+
+        // Right arm
+        BrickList.Add(new Brick(x + 55, y - 15, 10, -30, SKColors.BurlyWood));
+
+        // Scarf (wrapped around neck area)
+        BrickList.Add(new Brick(x + 18, y - 48, 34, -8, SKColors.Red));
+
+        // Scarf hanging
+        BrickList.Add(new Brick(x + 12, y - 48, 8, -25, SKColors.Red));
+
+        // Left leg
+        BrickList.Add(new Brick(x + 20, y, 12, -25, SKColors.Brown));
+
+        // Right leg
+        BrickList.Add(new Brick(x + 38, y, 12, -25, SKColors.Brown));
+
+        return 70;
     }
 
     public void AddFlake(bool isBack)
@@ -153,7 +216,7 @@ public class Sky
         SFList.RemoveAll(x => x.DoRemove);
 
         int n = SFList.Count(x => !x.IsFalling && x.Y >= Floor);
-        if (n > (Width - Footprint) / SnowFlake.Dim) {
+        if (Footprint < Width && n > (Width - Footprint) / SnowFlake.Dim) {
             SFList.RemoveAll(x => !x.IsFalling && x.Y >= Floor);
             Floor -= SnowFlake.Dim2;
             LastFloorFused = DateTime.Now;
