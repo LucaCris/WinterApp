@@ -16,7 +16,7 @@ public partial class Home
     float windX = 0;
     const double minForce = 0.1;
     double force = minForce;
-    public float DPI;
+    public float DPI = 1;
     private DateTime LastRender;
     int FPS;
     int throttle;
